@@ -405,6 +405,8 @@ PanelGroup.defaultProps = {
 };
 
 class Panel extends React.Component {
+  nextFrameTimerHandler = null;
+
   // Find the resizeObject if it has one
   componentDidMount() {
     if (this.props.resize === "stretch") {
@@ -414,6 +416,10 @@ class Panel extends React.Component {
       this.refs.resizeObject.data = "about:blank";
       this.onNextFrame(this.calculateStretchWidth);
     }
+  }
+
+  componentWillUnmount() {
+    this.nextFrameTimerHandler && clearTimeout(this.nextFrameTimerHandler);
   }
 
   // Attach resize event listener to resizeObject
@@ -426,7 +432,7 @@ class Panel extends React.Component {
 
   // Utility function to wait for next render before executing a function
   onNextFrame = callback => {
-    setTimeout(function() {
+    this.nextFrameTimerHandler = setTimeout(function() {
       window.requestAnimationFrame(callback);
     }, 0);
   };
